@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KOCHINOSE SKATE TRIP 🛹 鳥取遠征</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c27;
+    --accent: #ff4d1c;
+    --accent2: #ffd700;
+    --text: #f0f0f0;
+    --muted: #666;
+    --green: #00e676;
+    --blue: #2979ff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  header {
+    background: linear-gradient(135deg, #0a0a0f 0%, #1a0a00 100%);
+    border-bottom: 2px solid var(--accent);
+    padding: 14px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-family: 'Bebas Neue', cursive; font-size: 26px; letter-spacing: 3px; color: var(--accent); text-shadow: 0 0 20px rgba(255,77,28,0.5); }
+  .logo span { color: var(--accent2); }
+  .date-badge { background: var(--accent); color: white; font-weight: 900; font-size: 12px; padding: 4px 10px; letter-spacing: 1px; }
+
+.app {
+display: grid;
+grid-template-columns: 1fr 390px;
+grid-template-rows: auto 1fr;
+height: calc(100vh - 58px);
+}
+.map-area { grid-row: 1 / 3; background: #080d14; overflow: hidden; }
+#routeMap { width: 100%; height: 100%; }
+
+/* ETA */
+.eta-panel { background: var(–surface); border-bottom: 1px solid #222; padding: 14px 18px; }
+.eta-title { font-family: ‘Bebas Neue’, cursive; font-size: 12px; letter-spacing: 2px; color: var(–muted); margin-bottom: 8px; }
+.eta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-bottom: 10px; }
+.eta-item { background: var(–surface2); padding: 8px 9px; border-left: 3px solid var(–accent); }
+.eta-item.gold { border-color: var(–accent2); }
+.eta-item.blue { border-color: var(–blue); }
+.eta-item.green { border-color: var(–green); }
+.eta-spot { font-size: 9px; color: var(–muted); margin-bottom: 1px; }
+.eta-time { font-family: ‘Bebas Neue’, cursive; font-size: 20px; letter-spacing: 1px; }
+.eta-label { font-size: 9px; color: var(–muted); }
+.controls { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; }
+.ctrl-group label { font-size: 10px; color: var(–muted); display: block; margin-bottom: 3px; }
+.ctrl-row { display: flex; align-items: center; gap: 6px; }
+.ctrl-row input[type=range] { width: 90px; }
+.ctrl-val { font-family: ‘Bebas Neue’, cursive; font-size: 14px; color: var(–text); min-width: 28px; }
+.dep-ctrl { display: flex; align-items: center; border: 1px solid #333; }
+.dep-btn { background: var(–surface2); border: none; color: var(–text); width: 28px; height: 28px; cursor: pointer; font-size: 15px; transition: background .15s; }
+.dep-btn:hover { background: var(–accent); }
+.dep-display { font-family: ‘Bebas Neue’, cursive; font-size: 17px; padding: 0 10px; color: var(–accent); background: var(–bg); border-left: 1px solid #333; border-right: 1px solid #333; line-height: 28px; }
+
+/* CHAT */
+.chat-area { background: var(–surface); display: flex; flex-direction: column; overflow: hidden; }
+.chat-header { padding: 10px 16px; border-bottom: 1px solid #222; display: flex; align-items: center; gap: 8px; }
+.chat-header-title { font-family: ‘Bebas Neue’, cursive; font-size: 17px; letter-spacing: 2px; }
+.online-count { background: var(–green); color: #000; font-size: 10px; font-weight: 900; padding: 2px 7px; border-radius: 10px; margin-left: auto; }
+.messages { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 9px; scrollbar-width: thin; scrollbar-color: var(–accent) transparent; }
+.messages::-webkit-scrollbar { width: 3px; }
+.messages::-webkit-scrollbar-thumb { background: var(–accent); }
+.msg { display: flex; gap: 8px; animation: msgIn .3s ease; }
+.msg.me { flex-direction: row-reverse; }
+@keyframes msgIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+.avatar { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; border: 2px solid var(–accent); background: var(–surface2); clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%); }
+.msg-content { max-width: 200px; }
+.msg-name { font-size: 10px; color: var(–muted); margin-bottom: 2px; font-weight: 700; letter-spacing: 1px; }
+.msg.me .msg-name { text-align: right; }
+.bubble { background: var(–surface2); padding: 8px 11px; font-size: 12px; line-height: 1.5; border: 1px solid #2a2a3a; }
+.msg.me .bubble { background: rgba(255,77,28,.13); border-color: rgba(255,77,28,.3); }
+.msg-time { font-size: 10px; color: var(–muted); margin-top: 2px; }
+.msg.me .msg-time { text-align: right; }
+
+/* VOTE */
+.vote-section { padding: 10px 14px; border-top: 1px solid #222; background: var(–bg); }
+.vote-section-title { font-family: ‘Bebas Neue’, cursive; font-size: 12px; letter-spacing: 2px; color: var(–muted); margin-bottom: 7px; }
+.spot-card { background: var(–surface2); border: 1px solid #2a2a3a; padding: 8px 11px; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 8px; margin-bottom: 5px; transition: border-color .2s; }
+.spot-card:last-child { margin-bottom: 0; }
+.spot-card:hover { border-color: var(–accent); }
+.spot-card-name { font-size: 13px; font-weight: 700; }
+.spot-card-detail { font-size: 10px; color: var(–muted); margin-top: 1px; }
+.vote-btns { display: flex; gap: 3px; }
+.vote-btn { width: 29px; height: 29px; border: 1px solid #333; background: transparent; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+.vote-btn:hover { background: #2a2a3a; transform: scale(1.1); }
+.vote-btn.active-yes { background: rgba(0,230,118,.2); border-color: var(–green); }
+.vote-btn.active-maybe { background: rgba(255,215,0,.2); border-color: var(–accent2); }
+.vote-btn.active-no { background: rgba(255,77,28,.2); border-color: var(–accent); }
+.vote-count { font-size: 10px; color: var(–muted); margin-top: 3px; display: flex; gap: 6px; }
+.vote-yes{color:var(–green)} .vote-maybe{color:var(–accent2)} .vote-no{color:var(–accent)}
+
+/* INPUT */
+.input-area { padding: 9px 13px; border-top: 1px solid #222; background: var(–surface); display: flex; gap: 6px; align-items: flex-end; }
+.name-select { background: var(–surface2); border: 1px solid #333; color: var(–text); padding: 5px 6px; font-size: 11px; font-family: inherit; width: 80px; flex-shrink: 0; }
+.msg-input { flex: 1; background: var(–surface2); border: 1px solid #333; color: var(–text); padding: 7px 10px; font-size: 12px; font-family: inherit; resize: none; height: 34px; line-height: 1.4; }
+.msg-input:focus,.name-select:focus { outline: none; border-color: var(–accent); }
+.send-btn { background: var(–accent); border: none; color: white; width: 34px; height: 34px; cursor: pointer; font-size: 14px; transition: all .15s; flex-shrink: 0; clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%); }
+.send-btn:hover { background: #ff6a3d; }
+.grain { position: fixed; inset: 0; pointer-events: none; opacity: .03; z-index: 1000; background-image: url(“data:image/svg+xml,%3Csvg viewBox=‘0 0 200 200’ xmlns=‘http://www.w3.org/2000/svg’%3E%3Cfilter id=‘n’%3E%3CfeTurbulence type=‘fractalNoise’ baseFrequency=‘0.9’ numOctaves=‘4’ stitchTiles=‘stitch’/%3E%3C/filter%3E%3Crect width=‘100%25’ height=‘100%25’ filter=‘url(%23n)’/%3E%3C/svg%3E”); background-size:150px; }
+
+@media(max-width:800px){
+.app{grid-template-columns:1fr;grid-template-rows:260px auto 1fr;height:auto;}
+.map-area{grid-row:1;height:260px;}
+.eta-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+
+</head>
+<body>
+<div class="grain"></div>
+<header>
+  <div class="logo">KOCHINOSE <span>SKATE</span> TRIP</div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span style="font-size:11px;color:var(--muted);letter-spacing:1px;">名古屋 → 鳥取</span>
+    <div class="date-badge">4/29–30</div>
+  </div>
+</header>
+
+<div class="app">
+  <div class="map-area">
+    <!--
+      座標変換:
+      経度範囲: 133.8〜136.6 → x: 0〜800  (x = (lon-133.8)/2.8*800)
+      緯度範囲: 34.4〜36.0  → y: 0〜580  (y = (36.0-lat)/1.6*580)
+
+```
+  名古屋    135.77, 35.18 → x=570, y=300
+  三木SBP   134.99, 34.80 → x=342, y=437
+  姫路城    134.69, 34.84 → x=256, y=428
+  天橋立    135.19, 35.57 → x=399, y=157
+  鳥取砂丘  134.23, 35.54 → x=98,  y=168
+-->
+<svg id="routeMap" viewBox="0 0 800 580" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <filter id="glow"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <filter id="glow2"><feGaussianBlur stdDeviation="7" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <radialGradient id="bg" cx="50%" cy="40%"><stop offset="0%" stop-color="#0b1525"/><stop offset="100%" stop-color="#040710"/></radialGradient>
+    <linearGradient id="rg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ff4d1c"/><stop offset="100%" stop-color="#ffd700"/></linearGradient>
+  </defs>
+
+  <rect width="800" height="580" fill="url(#bg)"/>
+
+  <!-- Grid -->
+  <g stroke="#fff" stroke-opacity=".022" stroke-width="1">
+    <line x1="0" y1="145" x2="800" y2="145"/><line x1="0" y1="290" x2="800" y2="290"/>
+    <line x1="0" y1="435" x2="800" y2="435"/>
+    <line x1="200" y1="0" x2="200" y2="580"/><line x1="400" y1="0" x2="400" y2="580"/>
+    <line x1="600" y1="0" x2="600" y2="580"/>
+  </g>
+
+  <!-- 日本海 coast hint -->
+  <path d="M0,200 Q50,160 98,168 Q150,175 200,190 Q250,185 300,175 Q350,160 399,157 Q440,155 500,165 Q560,175 610,200 Q660,230 700,270 Q740,310 780,360"
+        fill="none" stroke="#1a3a5c" stroke-width="1.5" stroke-opacity=".5"/>
+  <!-- Pacific coast hint -->
+  <path d="M256,428 Q320,490 400,510 Q480,530 560,515 Q640,500 720,480 Q770,465 800,455"
+        fill="none" stroke="#1a3a5c" stroke-width="1" stroke-opacity=".3"/>
+
+  <!-- Sea / pref labels -->
+  <text x="40" y="148" font-size="10" fill="#1a4a7a" font-family="Bebas Neue" letter-spacing="2" opacity=".8">日 本 海</text>
+  <text x="660" y="545" font-size="10" fill="#1a4a7a" font-family="Bebas Neue" letter-spacing="2" opacity=".7">太 平 洋</text>
+  <text x="430" y="360" font-size="9" fill="#263040" font-family="Noto Sans JP" opacity=".8">兵庫県</text>
+  <text x="100" y="310" font-size="9" fill="#263040" font-family="Noto Sans JP" opacity=".8">鳥取県</text>
+  <text x="375" y="120" font-size="9" fill="#263040" font-family="Noto Sans JP" opacity=".8">京都府</text>
+  <text x="660" y="320" font-size="9" fill="#263040" font-family="Noto Sans JP" opacity=".8">愛知県</text>
+
+  <!-- Route glow -->
+  <path d="M570,300 Q460,370 304,445" fill="none" stroke="rgba(255,77,28,.12)" stroke-width="16" stroke-linecap="round"/>
+  <path d="M304,445 Q270,390 230,320 Q180,240 98,168" fill="none" stroke="rgba(255,215,0,.09)" stroke-width="14" stroke-linecap="round"/>
+
+  <!-- Route: 名古屋 → 日岡山 -->
+  <path d="M570,300 Q460,370 304,445" fill="none" stroke="#ff4d1c" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="9 5">
+    <animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1.1s" repeatCount="indefinite"/>
+  </path>
+  <!-- Route: 日岡山 → 鳥取 -->
+  <path d="M304,445 Q270,390 230,320 Q180,240 98,168" fill="none" stroke="#ffd700" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="9 5">
+    <animate attributeName="stroke-dashoffset" from="0" to="-28" dur="1.1s" repeatCount="indefinite"/>
+  </path>
+
+  <!-- 姫路城 detour from main route -->
+  <path d="M280,440 Q268,440 256,428" fill="none" stroke="#2979ff" stroke-width="1.5" stroke-dasharray="5 5" opacity=".55"/>
+
+  <!-- Distance labels -->
+  <text x="450" y="355" font-size="8" fill="#3a3a4a" font-family="Bebas Neue" transform="rotate(-25,450,355)">〜150km / 約2h</text>
+  <text x="200" y="310" font-size="8" fill="#3a3a4a" font-family="Bebas Neue" transform="rotate(-65,200,310)">〜100km / 約1h40m</text>
+
+  <!-- ======= PINS ======= -->
+
+  <!-- 名古屋 -->
+  <g transform="translate(570,300)" filter="url(#glow2)">
+    <circle r="18" fill="rgba(255,77,28,.08)" stroke="#ff4d1c" stroke-width=".5">
+      <animate attributeName="r" values="18;26;18" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;.25;1" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="7" fill="#ff4d1c"/>
+    <text x="-40" y="-18" font-size="13" fill="#ff4d1c" font-family="Bebas Neue" letter-spacing="1">名古屋</text>
+    <text x="-40" y="-6" font-size="9" fill="#888">🚗 スタート</text>
+  </g>
+
+  <!-- 日岡山スケートパーク -->
+  <g transform="translate(304,445)" filter="url(#glow)">
+    <circle r="12" fill="rgba(255,215,0,.12)" stroke="#ffd700" stroke-width="1.5"/>
+    <polygon points="0,-8 2.5,-2.5 8,-2.5 3.5,1.5 5.5,8 0,4.5 -5.5,8 -3.5,1.5 -8,-2.5 -2.5,-2.5" fill="#ffd700"/>
+    <text x="15" y="-13" font-size="12" fill="#ffd700" font-family="Bebas Neue" letter-spacing="1">日岡山SP</text>
+    <text x="15" y="-1" font-size="9" fill="#aaa">🛹 日岡山スケートパーク</text>
+    <text x="15" y="9" font-size="8" fill="#666">加古川市加古川町大野1544</text>
+  </g>
+
+  <!-- 姫路城 -->
+  <g transform="translate(256,428)" id="pin-himeji" style="cursor:pointer">
+    <circle r="9" fill="rgba(41,121,255,.18)" stroke="#2979ff" stroke-width="1.5"/>
+    <circle r="4" fill="#2979ff"/>
+    <text x="-58" y="-12" font-size="11" fill="#2979ff" font-family="Bebas Neue" letter-spacing="1">姫路城</text>
+    <text x="-58" y="0" font-size="8" fill="#666">🏯 世界遺産</text>
+  </g>
+
+  <!-- 鳥取 -->
+  <g transform="translate(98,168)" filter="url(#glow2)">
+    <circle r="16" fill="rgba(0,230,118,.08)" stroke="#00e676" stroke-width="1.5">
+      <animate attributeName="r" values="16;24;16" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="1;.25;1" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="7" fill="#00e676"/>
+    <text x="-12" y="-20" font-size="13" fill="#00e676" font-family="Bebas Neue" letter-spacing="1">鳥取</text>
+    <text x="-12" y="-8" font-size="9" fill="#888">🏁 GOAL</text>
+  </g>
+
+  <!-- Compass -->
+  <g transform="translate(755,52)">
+    <circle r="18" fill="rgba(255,255,255,.02)" stroke="#2a2a3a" stroke-width="1"/>
+    <text x="0" y="-21" font-size="9" fill="#444" text-anchor="middle" font-family="Bebas Neue">N</text>
+    <line x1="0" y1="-13" x2="0" y2="13" stroke="#333" stroke-width="1"/>
+    <line x1="-13" y1="0" x2="13" y2="0" stroke="#333" stroke-width="1"/>
+    <polygon points="0,-11 2.5,0 0,11 -2.5,0" fill="#ff4d1c" opacity=".75"/>
+  </g>
+
+  <!-- Legend -->
+  <g transform="translate(16,540)">
+    <circle cx="6" cy="5" r="4" fill="#ff4d1c"/>
+    <text x="14" y="9" font-size="9" fill="#555">出発/到着</text>
+    <polygon points="56,5 58,10 63,10 59,13 61,18 56,15 51,18 53,13 49,10 54,10" fill="#ffd700" transform="scale(.75) translate(16,-1)"/>
+    <text x="66" y="9" font-size="9" fill="#555">スケートパーク</text>
+    <circle cx="130" cy="5" r="4" fill="#2979ff"/>
+    <text x="138" y="9" font-size="9" fill="#555">寄り道候補</text>
+  </g>
+</svg>
+```
+
+  </div>
+
+  <!-- ETA PANEL -->
+
+  <div class="eta-panel">
+    <div class="eta-title">⏱ タイムライン（推定）</div>
+    <div class="eta-grid">
+      <div class="eta-item">
+        <div class="eta-spot">名古屋</div>
+        <div class="eta-time" id="t-dep" style="color:var(--accent)">08:00</div>
+        <div class="eta-label">出発</div>
+      </div>
+      <div class="eta-item gold">
+        <div class="eta-spot">日岡山SP</div>
+        <div class="eta-time" id="t-skate-arr">10:00</div>
+        <div class="eta-label">着 / 滑 <span id="skate-dur">1.0</span>h</div>
+      </div>
+      <div class="eta-item blue">
+        <div class="eta-spot">寄り道</div>
+        <div class="eta-time" id="t-stop-arr">—</div>
+        <div class="eta-label"><span id="stop-dur">0</span>h 滞在</div>
+      </div>
+      <div class="eta-item green">
+        <div class="eta-spot">鳥取</div>
+        <div class="eta-time" id="t-arrive">16:40</div>
+        <div class="eta-label">予定到着</div>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="ctrl-group">
+        <label>🕐 出発時間</label>
+        <div class="dep-ctrl">
+          <button class="dep-btn" onclick="changeDep(-30)">－</button>
+          <div class="dep-display" id="depDisplay">08:00</div>
+          <button class="dep-btn" onclick="changeDep(30)">＋</button>
+        </div>
+      </div>
+      <div class="ctrl-group">
+        <label>🛹 スケート滞在</label>
+        <div class="ctrl-row">
+          <input type="range" id="skateTime" min="0.5" max="5" step="0.5" value="1" oninput="updateETA()" style="accent-color:var(--accent2)">
+          <span class="ctrl-val" id="skateVal">1h</span>
+        </div>
+      </div>
+      <div class="ctrl-group">
+        <label>📍 寄り道時間</label>
+        <div class="ctrl-row">
+          <input type="range" id="stopTime" min="0" max="3" step="0.5" value="0" oninput="updateETA()" style="accent-color:var(--blue)">
+          <span class="ctrl-val" id="stopVal">0h</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT -->
+
+  <div class="chat-area">
+    <div class="chat-header">
+      <span style="font-size:17px;">💬</span>
+      <span class="chat-header-title">TRIP CHAT</span>
+      <span class="online-count">🟢 相談中</span>
+    </div>
+    <div class="vote-section">
+      <div class="vote-section-title">📍 寄り道どうする？投票！</div>
+      <div id="spotCards"></div>
+    </div>
+    <div class="messages" id="messages"></div>
+    <div class="input-area">
+      <select class="name-select" id="myName">
+        <option value="">名前▼</option>
+        <option value="タロ">タロ 🛹</option>
+        <option value="ケン">ケン 🔥</option>
+        <option value="ユウ">ユウ ⚡</option>
+        <option value="コウ">コウ 💀</option>
+        <option value="リョウ">リョウ 🤙</option>
+        <option value="ヒロ">ヒロ 🎯</option>
+        <option value="マコ">マコ 🌊</option>
+      </select>
+      <textarea class="msg-input" id="msgInput" placeholder="メッセージ..."
+        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea>
+      <button class="send-btn" onclick="sendMsg()">➤</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// 名古屋→日岡山: 約150km 高速＋一般道込み約2時間
+// 日岡山→鳥取: 約100km 約1h40m
+// ※所要時間は高速IC降りてからの一般道含む
+const NAGOYA_HIOKA = 2.0;
+const HIOKA_TOTTORI = 1 + 40/60;
+let depMin = 8 * 60;
+
+function fmt(m) {
+  const h = Math.floor(m / 60) % 24, mm = m % 60;
+  return `${h.toString().padStart(2,'0')}:${mm.toString().padStart(2,'0')}`;
+}
+function changeDep(d) {
+  depMin = Math.max(5*60, Math.min(13*60, depMin + d));
+  document.getElementById('depDisplay').textContent = fmt(depMin);
+  updateETA();
+}
+function updateETA() {
+  const skH = parseFloat(document.getElementById('skateTime').value);
+  const stH = parseFloat(document.getElementById('stopTime').value);
+  document.getElementById('skateVal').textContent = skH + 'h';
+  document.getElementById('stopVal').textContent = stH + 'h';
+  document.getElementById('skate-dur').textContent = skH;
+  document.getElementById('stop-dur').textContent = stH;
+  document.getElementById('t-dep').textContent = fmt(depMin);
+
+  const skArr = depMin + NAGOYA_HIOKA * 60;
+  const skDep = skArr + skH * 60;
+  const stArr = skDep + (stH > 0 ? 30 : 0);
+  const totArr = skDep + stH * 60 + HIOKA_TOTTORI * 60;
+
+  document.getElementById('t-skate-arr').textContent = fmt(skArr);
+  document.getElementById('t-stop-arr').textContent = stH > 0 ? fmt(stArr) : '—';
+  const el = document.getElementById('t-arrive');
+  el.textContent = fmt(totArr);
+  el.style.color = totArr/60 > 20 ? '#ff4d1c' : totArr/60 > 18 ? '#ffd700' : '#00e676';
+}
+
+// SPOTS
+const spots = [
+  { id:'himeji', name:'姫路城 🏯', detail:'世界遺産 / 日岡山から西10km・約20分', votes:{yes:[],maybe:[],no:[]} },
+];
+const myVotes = {};
+const emojis = {タロ:'🛹',ケン:'🔥',ユウ:'⚡',コウ:'💀',リョウ:'🤙',ヒロ:'🎯',マコ:'🌊'};
+
+function renderSpots() {
+  document.getElementById('spotCards').innerHTML = spots.map(s => {
+    const mv = myVotes[s.id];
+    return `<div class="spot-card">
+      <div>
+        <div class="spot-card-name">${s.name}</div>
+        <div class="spot-card-detail">${s.detail}</div>
+        <div class="vote-count">
+          <span class="vote-yes">✅ ${s.votes.yes.length}</span>
+          <span class="vote-maybe">🤷 ${s.votes.maybe.length}</span>
+          <span class="vote-no">❌ ${s.votes.no.length}</span>
+        </div>
+      </div>
+      <div class="vote-btns">
+        <button class="vote-btn ${mv==='yes'?'active-yes':''}" onclick="vote('${s.id}','yes')">✅</button>
+        <button class="vote-btn ${mv==='maybe'?'active-maybe':''}" onclick="vote('${s.id}','maybe')">🤷</button>
+        <button class="vote-btn ${mv==='no'?'active-no':''}" onclick="vote('${s.id}','no')">❌</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function vote(id, type) {
+  const name = document.getElementById('myName').value;
+  if (!name) { alert('名前を選んでね！'); return; }
+  const s = spots.find(x => x.id === id);
+  ['yes','maybe','no'].forEach(t => s.votes[t] = s.votes[t].filter(n => n !== name));
+  if (myVotes[id] === type) { delete myVotes[id]; }
+  else {
+    s.votes[type].push(name);
+    myVotes[id] = type;
+    addMsg(name, `【${s.name}】${{yes:'行きたい！🙋',maybe:'どっちでも〜',no:'パスかな👋'}[type]}`, true);
+  }
+  renderSpots();
+}
+
+function nowTime() { const d=new Date(); return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
+
+function addMsg(name, text, isMe, time) {
+  const c = document.getElementById('messages');
+  const d = document.createElement('div');
+  d.className = `msg ${isMe ? 'me' : ''}`;
+  d.innerHTML = `<div class="avatar">${emojis[name]||'👤'}</div>
+    <div class="msg-content">
+      <div class="msg-name">${name}</div>
+      <div class="bubble">${text}</div>
+      <div class="msg-time">${time||nowTime()}</div>
+    </div>`;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+
+function sendMsg() {
+  const name = document.getElementById('myName').value;
+  const text = document.getElementById('msgInput').value.trim();
+  if (!name) { alert('名前を選んでください！'); return; }
+  if (!text) return;
+  addMsg(name, text, true);
+  document.getElementById('msgInput').value = '';
+}
+
+// Init messages
+[
+  {n:'タロ', t:'三木スケートパーク！コンクリートやからガチで滑れそう🔥', time:'07:10'},
+  {n:'ユウ', t:'天橋立って鳥取ルートやん！股のぞきしたい笑', time:'07:18'},
+  {n:'コウ', t:'姫路城は外だけでもテンション上がるよな〜', time:'07:31'},
+  {n:'ケン', t:'三木で2時間は欲しい。スライド練習したい', time:'07:44'},
+  {n:'リョウ', t:'夜は温泉宿でビールやろ〜🤙楽しみすぎ', time:'07:52'},
+].forEach(m => addMsg(m.n, m.t, false, m.time));
+
+renderSpots();
+updateETA();
+
+// Simulate initial votes
+setTimeout(() => {
+  [{s:'himeji',t:'yes',n:'ユウ'},{s:'himeji',t:'yes',n:'リョウ'},{s:'himeji',t:'maybe',n:'ケン'},{s:'himeji',t:'yes',n:'ヒロ'},{s:'himeji',t:'no',n:'マコ'}]
+  .forEach((v,i) => setTimeout(() => {
+    const sp = spots.find(x => x.id === v.s);
+    if (!sp.votes[v.t].includes(v.n)) sp.votes[v.t].push(v.n);
+    renderSpots();
+  }, i * 600), 0);
+}, 1500);
+
+setTimeout(() => addMsg('ユウ', '姫路城寄ってこうよ！外から見るだけでもテンション上がるやん', false), 2500);
+setTimeout(() => addMsg('マコ', '渋滞気になるな〜時間次第やな', false), 4800);
+</script>
+
+</body>
+</html>
