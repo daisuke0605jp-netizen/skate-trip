@@ -348,6 +348,7 @@
         <option value="リョウ">リョウ 🤙</option>
         <option value="ヒロ">ヒロ 🎯</option>
         <option value="マコ">マコ 🌊</option>
+        <option value="ダイスケ">ダイスケ 🤘</option>
       </select>
       <textarea class="msg-input" id="msgInput" placeholder="メッセージ..."
         onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea>
@@ -403,7 +404,7 @@ function updateETA() {
   el.style.color = arrH > 22 ? '#ff4d1c' : arrH > 20 ? '#ffd700' : '#00e676';
 }
 
-const emojis = {タロ:'🛹',ケン:'🔥',ユウ:'⚡',コウ:'💀',リョウ:'🤙',ヒロ:'🎯',マコ:'🌊'};
+const emojis = {タロ:'🛹',ケン:'🔥',ユウ:'⚡',コウ:'💀',リョウ:'🤙',ヒロ:'🎯',マコ:'🌊',ダイスケ:'🤘'};
 
 function nowTime() { const d=new Date(); return `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`; }
 
